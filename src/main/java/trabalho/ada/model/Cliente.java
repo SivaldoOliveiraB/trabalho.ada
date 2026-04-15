@@ -1,12 +1,29 @@
 package trabalho.ada.model;
 
-public class Cliente {
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import jakarta.persistence.*;
+import trabalho.ada.enums.Role;
 
-    private long id;
+@Entity
+@Table(name = "cliente")
+public class Cliente extends PanacheEntityBase {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String nome;
-    private String cpf;
-    private String email;
-    private String senha;
-    private String role;
 
+    @Column(unique = true, nullable = false)
+    private String cpf;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String senha;
+
+    @Column(name = "role", nullable = false)
+    private Role role;
 }
