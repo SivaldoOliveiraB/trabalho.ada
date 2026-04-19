@@ -28,6 +28,16 @@ public class Cliente extends PanacheEntityBase {
     @Column(name = "role", nullable = false)
     private Role role;
 
+    public Cliente() { }
+
+    public Cliente(String nome, String cpf, String email, String senha) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.email = email;
+        this.senha = senha;
+        this.role = Role.CLIENTE;
+    }
+
     public Long getId() {
         return id;
     }
