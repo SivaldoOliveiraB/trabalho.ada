@@ -7,9 +7,6 @@ public record UpdateClienteRequest(
         @NotNull(message = "Nome obrigatório.")
         String nome,
 
-        @NotNull(message = "CPF obrigatório.")
-        String cpf,
-
         @NotNull(message = "e-mail obrigatório.")
         String email,
 

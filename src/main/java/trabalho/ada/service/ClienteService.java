@@ -8,6 +8,7 @@ import jakarta.ws.rs.NotFoundException;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.model.PageResult;
 import trabalho.ada.resource.cliente.CreateClienteRequest;
+import trabalho.ada.resource.cliente.UpdateClienteRequest;
 
 @ApplicationScoped
 public class ClienteService {
@@ -33,6 +34,15 @@ public class ClienteService {
         validateUniqueEmail(request.email(), null);
         Cliente cliente = new Cliente(request.nome().trim(), request.cpf().trim(), request.email().trim(), request.senha().trim());
         cliente.persist();
+        return cliente;
+    }
+
+    public Cliente update(Long id, UpdateClienteRequest request){
+        Cliente cliente = getRequiredCliente(id);
+        validateUniqueEmail(request.email(), id);
+        cliente.setNome(request.nome());
+        cliente.setEmail(request.email());
+        cliente.setSenha(request.senha());
         return cliente;
     }
 

@@ -60,6 +60,16 @@ public class ClienteResource {
                 .build();
     }
 
+    @PUT
+    @Path("/{id}")
+    @Transactional
+    public ClienteResponse ClienteResponse(
+        @PathParam("id") Long id,
+        @Valid UpdateClienteRequest request
+    ){
+        return toResponse(clienteService.update(id, request));
+    }
+
     private ClienteResponse toResponse(Cliente cliente){
         return new ClienteResponse(cliente);
     }
