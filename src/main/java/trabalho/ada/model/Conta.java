@@ -14,6 +14,7 @@ public class Conta {
     @Column(unique = true, nullable = false)
     private String numero;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false)
     private TipoConta tipo;
 

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import trabalho.ada.enums.TipoTransacao;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transacao")
@@ -14,6 +14,7 @@ public class Transacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false)
     private TipoTransacao tipo;
 
@@ -21,7 +22,7 @@ public class Transacao {
     private BigDecimal valor;
 
     @Column(name = "data_hora", nullable = false)
-    private LocalDate dataHora;
+    private LocalDateTime dataHora;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "conta_origem_id")
