@@ -2,11 +2,16 @@ package trabalho.ada.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import trabalho.ada.enums.TipoConta;
+import trabalho.ada.enums.TipoTransacao;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.model.Conta;
+import trabalho.ada.model.Transacao;
 import trabalho.ada.repository.ContaRepository;
 import trabalho.ada.resource.conta.CreateContaRequest;
+
+import java.math.BigDecimal;
 
 @ApplicationScoped
 public class ContaService {
@@ -16,6 +21,9 @@ public class ContaService {
 
     @Inject
     ContaRepository contaRepository;
+
+    @Inject
+    TransacaoService transacaoService;
 
     public Conta create(CreateContaRequest request){
         Cliente cliente = clienteService.getRequiredCliente(request.cliente().id());
@@ -30,6 +38,22 @@ public class ContaService {
         conta.persist();
 
         return conta;
+    }
+
+    public Conta getRequiredConta(Long id) {
+        Conta conta = Conta.findById(id);
+        if (conta == null) {
+            throw new NotFoundException("Conta com o id " + id + " não encontrada");
+        }
+        return conta;
+    }
+
+    public Conta deposita(BigDecimal valor, Long contaId){
+        Conta contaDestino = getRequiredConta(contaId);
+        Transacao transacao = transacaoService.crate(TipoTransacao.DEPOSITO, valor, contaDestino);
+        contaDestino.setDeposito(transacao);
+
+        return contaDestino;
     }
 
     public String gerarNumeroConta(Long sequencial) {

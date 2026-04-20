@@ -9,10 +9,11 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import java.net.URI;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.resource.PageResponse;
 import trabalho.ada.service.ClienteService;
-import java.net.URI;
+
 
 @Path("/cliente")
 @Consumes(MediaType.APPLICATION_JSON)

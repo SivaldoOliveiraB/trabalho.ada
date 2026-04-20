@@ -10,8 +10,7 @@ import java.math.BigDecimal;
 public record ContaResponse(
         Long id,
         String numero,
-        TipoConta
-        tipo,
+        TipoConta  tipo,
         BigDecimal saldo,
         ClienteResponse titular
 ) {

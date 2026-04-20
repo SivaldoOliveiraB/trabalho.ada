@@ -1,5 +1,6 @@
 package trabalho.ada.model;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import trabalho.ada.enums.TipoTransacao;
 
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transacao")
-public class Transacao {
+public class Transacao extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +27,35 @@ public class Transacao {
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "conta_origem_id")
-    private Conta conta_origem;
+    private Conta contaOrigem;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "conta_destino_id")
-    private Conta conta_destino;
+    private Conta contaDestino;
+
+    public Transacao(TipoTransacao tipo, BigDecimal valor) {
+        this.tipo = tipo;
+        this.valor = valor;
+        this.dataHora = LocalDateTime.now();
+    }
+
+    public void setConta_destino(Conta contaDestino) {
+        this.contaDestino = contaDestino;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public TipoTransacao getTipo() {
+        return tipo;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
 }

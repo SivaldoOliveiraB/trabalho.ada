@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import trabalho.ada.enums.TipoConta;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "conta")
@@ -24,6 +26,12 @@ public class Conta extends PanacheEntityBase {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+
+    @OneToMany(mappedBy = "contaOrigem")
+    private List<Transacao> saques = new ArrayList<>();
+
+    @OneToMany(mappedBy = "contaDestino")
+    private List<Transacao> depositos = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -55,5 +63,13 @@ public class Conta extends PanacheEntityBase {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public Transacao getDeposito() {
+        return this.depositos.get(0);
+    }
+
+    public void setDeposito(Transacao deposito) {
+        this.depositos.add(deposito);
     }
 }
