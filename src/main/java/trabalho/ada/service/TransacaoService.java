@@ -2,7 +2,6 @@ package trabalho.ada.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
-import jakarta.ws.rs.WebApplicationException;
 
 import trabalho.ada.enums.TipoConta;
 import trabalho.ada.enums.TipoTransacao;
