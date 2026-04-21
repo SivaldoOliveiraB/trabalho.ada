@@ -4,6 +4,7 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 import trabalho.ada.enums.TipoTransacao;
 
+import java.util.List;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -71,5 +72,12 @@ public class Transacao extends PanacheEntityBase {
 
     public LocalDateTime getDataHora() {
         return dataHora;
+    }
+
+    public static List<Transacao> findByContaId(Long contaId) {
+        return find(
+                "contaOrigem.id = ?1 or contaDestino.id = ?1 order by dataHora desc",
+                contaId
+        ).list();
     }
 }

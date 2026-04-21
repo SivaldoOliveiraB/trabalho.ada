@@ -7,6 +7,7 @@ import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @ApplicationScoped
 public class TransacaoService {
@@ -43,5 +44,9 @@ public class TransacaoService {
         }
 
         return transacao;
+    }
+
+    public List<Transacao> getByContaId(Long contaId) {
+        return Transacao.findByContaId(contaId);
     }
 }

@@ -8,6 +8,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.UriInfo;
 import trabalho.ada.model.Transacao;
 import trabalho.ada.service.TransacaoService;
+import java.util.List;
 
 @Path("/transacoes")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -25,6 +26,19 @@ public class TransacaoResourse {
             return toResponse(transacaoService.getRequiredTransacao(id));
     }
 
+    @GET
+    public List<TransacaoResponse> findByContaId(
+            @QueryParam("contaId") Long contaId
+    ) {
+        if (contaId == null) {
+            throw new WebApplicationException("contaId é obrigatório", 400);
+        }
+
+        return transacaoService.getByContaId(contaId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
     private TransacaoResponse toResponse(Transacao transacao){ return new TransacaoResponse(transacao); }
 
 }
