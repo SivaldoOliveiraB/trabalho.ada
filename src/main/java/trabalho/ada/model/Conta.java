@@ -2,6 +2,7 @@ package trabalho.ada.model;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
+import org.hibernate.annotations.Formula;
 import trabalho.ada.enums.TipoConta;
 
 import java.math.BigDecimal;
@@ -27,6 +28,9 @@ public class Conta extends PanacheEntityBase {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
+    @Formula("(SELECT s.saldo FROM view_saldo s WHERE s.numero = numero)")
+    private BigDecimal saldo;
+
     //@OneToMany(mappedBy = "contaOrigem")
     //private List<Transacao> saques = new ArrayList<>();
 
@@ -50,7 +54,7 @@ public class Conta extends PanacheEntityBase {
     }
 
     public BigDecimal getSaldo(){
-        return new BigDecimal("10.50");
+        return saldo;
     }
 
     public void setNumero(String numero) {
@@ -63,6 +67,10 @@ public class Conta extends PanacheEntityBase {
 
     public void setCliente(Cliente cliente) {
         this.cliente = cliente;
+    }
+
+    public void setSaldo(BigDecimal saldo) {
+        this.saldo = saldo;
     }
 
     /*
