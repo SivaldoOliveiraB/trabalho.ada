@@ -48,12 +48,11 @@ public class ContaService {
         return conta;
     }
 
-    public Conta deposita(BigDecimal valor, Long contaId){
+    public Transacao deposita(BigDecimal valor, Long contaId){
         Conta contaDestino = getRequiredConta(contaId);
         Transacao transacao = transacaoService.crate(TipoTransacao.DEPOSITO, valor, contaDestino);
-        contaDestino.setDeposito(transacao);
 
-        return contaDestino;
+        return transacao;
     }
 
     public String gerarNumeroConta(Long sequencial) {

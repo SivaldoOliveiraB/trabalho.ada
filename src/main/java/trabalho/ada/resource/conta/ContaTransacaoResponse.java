@@ -1,6 +1,7 @@
 package trabalho.ada.resource.conta;
 
 import trabalho.ada.model.Conta;
+import trabalho.ada.model.Transacao;
 
 public record ContaTransacaoResponse(
         Long id,

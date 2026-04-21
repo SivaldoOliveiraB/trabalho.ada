@@ -39,12 +39,16 @@ public class Transacao extends PanacheEntityBase {
         this.dataHora = LocalDateTime.now();
     }
 
-    public void setConta_destino(Conta contaDestino) {
+    public void setContaDestino(Conta contaDestino) {
         this.contaDestino = contaDestino;
     }
 
-    public long getId() {
-        return id;
+    public Conta getContaDestino() {
+        return contaDestino;
+    }
+
+    public Long getId() {
+        return this.id;
     }
 
     public TipoTransacao getTipo() {

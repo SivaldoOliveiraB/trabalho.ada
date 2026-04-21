@@ -12,7 +12,7 @@ public class TransacaoService {
 
     public Transacao crate(TipoTransacao tipo, BigDecimal valor, Conta contaDestino){
         Transacao transacao = new Transacao(tipo, valor);
-        transacao.setConta_destino(contaDestino);
+        transacao.setContaDestino(contaDestino);
         transacao.persist();
 
         return transacao;

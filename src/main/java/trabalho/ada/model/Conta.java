@@ -27,11 +27,11 @@ public class Conta extends PanacheEntityBase {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "contaOrigem")
-    private List<Transacao> saques = new ArrayList<>();
+    //@OneToMany(mappedBy = "contaOrigem")
+    //private List<Transacao> saques = new ArrayList<>();
 
-    @OneToMany(mappedBy = "contaDestino")
-    private List<Transacao> depositos = new ArrayList<>();
+    //@OneToMany(mappedBy = "contaDestino")
+    //private List<Transacao> depositos = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -65,6 +65,7 @@ public class Conta extends PanacheEntityBase {
         this.cliente = cliente;
     }
 
+    /*
     public Transacao getDeposito() {
         return this.depositos.get(0);
     }
@@ -72,4 +73,6 @@ public class Conta extends PanacheEntityBase {
     public void setDeposito(Transacao deposito) {
         this.depositos.add(deposito);
     }
+
+     */
 }

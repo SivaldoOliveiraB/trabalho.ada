@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import trabalho.ada.model.Conta;
+import trabalho.ada.model.Transacao;
 import trabalho.ada.service.ContaService;
 
 import java.math.BigDecimal;
@@ -41,14 +42,14 @@ public class ContaResource {
             @PathParam("id") Long contaId,
             @Context UriInfo uriInfo
     ){
-        Conta conta = contaService.deposita(request.valor(), contaId);
-        URI location = uriInfo.getAbsolutePathBuilder().path(conta.getId().toString()).build();
-        return Response.created(location).entity(toResponseContaTransacao(conta)).build();
+        Transacao transacao = contaService.deposita(request.valor(), contaId);
+        URI location = uriInfo.getAbsolutePathBuilder().path(transacao.getId().toString()).build();
+        return Response.created(location).entity(toResponseContaTransacao(transacao)).build();
     }
 
     private ContaResponse toResponse(Conta conta) {
         return new ContaResponse(conta);
     }
 
-    private ContaTransacaoResponse toResponseContaTransacao(Conta conta) { return  new ContaTransacaoResponse(conta); }
+    private TransacaoResponse toResponseContaTransacao(Transacao transacao) { return  new TransacaoResponse(transacao); }
 }
