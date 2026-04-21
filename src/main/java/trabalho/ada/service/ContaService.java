@@ -64,6 +64,13 @@ public class ContaService {
         return transacaoService.crate(TipoTransacao.SAQUE, valorNegativo, contaOrigem, contaDestino);
     }
 
+    public Transacao transferencia(BigDecimal valor, Long contaOrigemId, Long contaDestinoId){
+        Conta contaOrigem = getRequiredConta(contaOrigemId);
+        Conta contaDestino = getRequiredConta(contaDestinoId);
+
+        return transacaoService.crate(TipoTransacao.TRANSFERENCIA, valor, contaOrigem, contaDestino);
+    }
+
     public String gerarNumeroConta(Long sequencial) {
         int digito = (int) (sequencial % 3);
 

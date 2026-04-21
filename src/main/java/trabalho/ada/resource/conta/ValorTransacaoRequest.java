@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-public record DepositoRequest(
-        @NotNull(message = "O valor do depósito é obrigatório")
+public record ValorTransacaoRequest(
+        @NotNull(message = "O valor da transação é obrigatório")
         BigDecimal valor
 ) {}

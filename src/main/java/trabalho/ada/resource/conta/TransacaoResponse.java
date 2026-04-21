@@ -19,7 +19,7 @@ public record TransacaoResponse(
                 transacao.getId(),
                 transacao.getTipo(),
                 transacao.getValor().abs(),
-                transacao.getContaDestino() != null
+                transacao.getTipo().equals(TipoTransacao.DEPOSITO)
                         ? transacao.getContaDestino().getSaldo()
                         : transacao.getContaOrigem().getSaldo(),
                 transacao.getDataHora(),

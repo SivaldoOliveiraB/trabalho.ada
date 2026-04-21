@@ -12,7 +12,6 @@ import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
 import trabalho.ada.service.ContaService;
 
-import java.math.BigDecimal;
 import java.net.URI;
 
 @Path("/contas")
@@ -38,7 +37,7 @@ public class ContaResource {
     @Path("/{id}/deposito")
     @Transactional
     public Response deposita(
-            @Valid DepositoRequest request,
+            @Valid ValorTransacaoRequest request,
             @PathParam("id") Long contaId,
             @Context UriInfo uriInfo
     ){
@@ -51,7 +50,7 @@ public class ContaResource {
     @Path("/{id}/saque")
     @Transactional
     public Response saca(
-            @Valid DepositoRequest request,
+            @Valid ValorTransacaoRequest request,
             @PathParam("id") Long contaId,
             @Context UriInfo uriInfo
     ){
@@ -60,9 +59,26 @@ public class ContaResource {
         return Response.created(location).entity(toResponseContaTransacao(transacao)).build();
     }
 
+    @POST
+    @Path("/{id}/transferencia")
+    @Transactional
+    public Response transfere(
+            @Valid TransferenciaResquest resquest,
+            @PathParam("id") Long contaOrigemId,
+            @Context UriInfo uriInfo
+    ){
+        Transacao transacao = contaService.transferencia(resquest.valor(), contaOrigemId, resquest.contaDestino().id());
+
+        URI location = uriInfo.getAbsolutePathBuilder().path(transacao.getId().toString()).build();
+        return Response.created(location).entity(toResponseTransferencia(transacao)).build();
+    }
+
     private ContaResponse toResponse(Conta conta) {
         return new ContaResponse(conta);
     }
 
     private TransacaoResponse toResponseContaTransacao(Transacao transacao) { return  new TransacaoResponse(transacao); }
+
+    private TransferenciaResponse toResponseTransferencia(Transacao transacao) { return new TransferenciaResponse(transacao); }
+
 }
