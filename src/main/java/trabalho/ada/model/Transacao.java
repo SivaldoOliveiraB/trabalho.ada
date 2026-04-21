@@ -25,13 +25,15 @@ public class Transacao extends PanacheEntityBase {
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conta_origem_id")
     private Conta contaOrigem;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conta_destino_id")
     private Conta contaDestino;
+
+    public Transacao(){}
 
     public Transacao(TipoTransacao tipo, BigDecimal valor) {
         this.tipo = tipo;

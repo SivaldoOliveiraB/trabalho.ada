@@ -73,9 +73,7 @@ public class ContaResource {
         return Response.created(location).entity(toResponseTransferencia(transacao)).build();
     }
 
-    private ContaResponse toResponse(Conta conta) {
-        return new ContaResponse(conta);
-    }
+    private ContaResponse toResponse(Conta conta) { return new ContaResponse(conta); }
 
     private TransacaoResponse toResponseContaTransacao(Transacao transacao) { return  new TransacaoResponse(transacao); }
 

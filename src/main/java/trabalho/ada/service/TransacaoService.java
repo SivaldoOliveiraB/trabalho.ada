@@ -1,6 +1,7 @@
 package trabalho.ada.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.NotFoundException;
 import trabalho.ada.enums.TipoTransacao;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
@@ -27,10 +28,19 @@ public class TransacaoService {
             contaOrigem.setSaldo(contaOrigem.getSaldo().add(valorSaldoOrigem));
         }
 
-
         transacao.setContaOrigem(contaOrigem);
         transacao.setContaDestino(contaDestino);
         transacao.persist();
+
+        return transacao;
+    }
+
+    public Transacao getRequiredTransacao(Long id){
+        Transacao transacao = Transacao.findById(id);
+
+        if (transacao == null){
+            throw new NotFoundException("Transacao com o id " + id + " não encontrada");
+        }
 
         return transacao;
     }
