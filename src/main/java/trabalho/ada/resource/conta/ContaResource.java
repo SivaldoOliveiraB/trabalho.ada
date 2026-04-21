@@ -42,7 +42,20 @@ public class ContaResource {
             @PathParam("id") Long contaId,
             @Context UriInfo uriInfo
     ){
-        Transacao transacao = contaService.deposita(request.valor(), contaId);
+        Transacao transacao = contaService.deposito(request.valor(), contaId);
+        URI location = uriInfo.getAbsolutePathBuilder().path(transacao.getId().toString()).build();
+        return Response.created(location).entity(toResponseContaTransacao(transacao)).build();
+    }
+
+    @POST
+    @Path("/{id}/saque")
+    @Transactional
+    public Response saca(
+            @Valid DepositoRequest request,
+            @PathParam("id") Long contaId,
+            @Context UriInfo uriInfo
+    ){
+        Transacao transacao = contaService.saque(request.valor(), contaId);
         URI location = uriInfo.getAbsolutePathBuilder().path(transacao.getId().toString()).build();
         return Response.created(location).entity(toResponseContaTransacao(transacao)).build();
     }

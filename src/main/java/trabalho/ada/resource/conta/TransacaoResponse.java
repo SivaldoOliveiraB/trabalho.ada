@@ -18,10 +18,14 @@ public record TransacaoResponse(
         this(
                 transacao.getId(),
                 transacao.getTipo(),
-                transacao.getValor(),
-                transacao.getContaDestino().getSaldo(),
+                transacao.getValor().abs(),
+                transacao.getContaDestino() != null
+                        ? transacao.getContaDestino().getSaldo()
+                        : transacao.getContaOrigem().getSaldo(),
                 transacao.getDataHora(),
-                new ContaTransacaoResponse(transacao.getContaDestino())
+                transacao.getContaOrigem() == null
+                        ? new ContaTransacaoResponse(transacao.getContaDestino())
+                        : new ContaTransacaoResponse(transacao.getContaOrigem())
         );
     }
 }

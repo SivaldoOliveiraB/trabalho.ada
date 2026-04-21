@@ -48,11 +48,20 @@ public class ContaService {
         return conta;
     }
 
-    public Transacao deposita(BigDecimal valor, Long contaId){
+    public Transacao deposito(BigDecimal valor, Long contaId){
         Conta contaDestino = getRequiredConta(contaId);
-        Transacao transacao = transacaoService.crate(TipoTransacao.DEPOSITO, valor, contaDestino);
+        Conta contaOrigem = null;
 
-        return transacao;
+        return transacaoService.crate(TipoTransacao.DEPOSITO, valor, contaOrigem, contaDestino);
+    }
+
+    public Transacao saque(BigDecimal valor, Long contaId){
+        Conta contaDestino = null;
+        Conta contaOrigem = getRequiredConta(contaId);
+
+        BigDecimal valorNegativo = valor.abs().negate();
+
+        return transacaoService.crate(TipoTransacao.SAQUE, valorNegativo, contaOrigem, contaDestino);
     }
 
     public String gerarNumeroConta(Long sequencial) {

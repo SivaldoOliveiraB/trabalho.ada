@@ -47,6 +47,14 @@ public class Transacao extends PanacheEntityBase {
         return contaDestino;
     }
 
+    public Conta getContaOrigem() {
+        return contaOrigem;
+    }
+
+    public void setContaOrigem(Conta contaOrigem) {
+        this.contaOrigem = contaOrigem;
+    }
+
     public Long getId() {
         return this.id;
     }
