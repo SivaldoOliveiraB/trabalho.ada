@@ -1,5 +1,6 @@
 package trabalho.ada.service;
 
+import org.mindrot.jbcrypt.BCrypt;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -33,6 +34,7 @@ public class ClienteService {
         validateUniqueCPf(request.cpf(), null);
         validateUniqueEmail(request.email(), null);
         Cliente cliente = new Cliente(request.nome().trim(), request.cpf().trim(), request.email().trim(), request.senha().trim());
+        cliente.setSenha(BCrypt.hashpw(cliente.getSenha(), BCrypt.gensalt(10)));
         cliente.persist();
         return cliente;
     }

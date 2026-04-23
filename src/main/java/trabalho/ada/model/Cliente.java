@@ -61,4 +61,12 @@ public class Cliente extends PanacheEntityBase {
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public Role getRole() {
+        return role;
+    }
 }
