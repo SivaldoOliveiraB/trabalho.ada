@@ -71,7 +71,7 @@ public class AuthService  implements CurrentUserService{
                 .claim("id", cliente.getId())
                 .claim("email", cliente.getEmail())
                 .claim("email", cliente.getEmail())
-                .expiresIn(Duration.ofMinutes(30))
+                .expiresIn(Duration.ofMinutes(300))
                 .sign();
     }
 

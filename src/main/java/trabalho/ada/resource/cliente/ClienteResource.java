@@ -1,6 +1,7 @@
 package trabalho.ada.resource.cliente;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -10,12 +11,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
+
 import trabalho.ada.model.Cliente;
 import trabalho.ada.resource.PageResponse;
 import trabalho.ada.service.ClienteService;
 
 
-@Path("/cliente")
+@Path("/clientes")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ClienteResource {
@@ -24,7 +26,7 @@ public class ClienteResource {
     ClienteService clienteService;
 
     @GET
-    @PermitAll
+    @RolesAllowed("GERENTE")
     public PageResponse<ClienteResponse> list(
             @QueryParam("nome") String nome,
             @QueryParam("page") @DefaultValue("0") int page,
@@ -40,13 +42,14 @@ public class ClienteResource {
 
     @GET
     @Path("/{id}")
-    @PermitAll
+    @RolesAllowed("GERENTE")
     public ClienteResponse findById(@PathParam("id") Long id){
         return toResponse(clienteService.findById(id));
     }
 
     @POST
     @Transactional
+    @RolesAllowed("GERENTE")
     public Response create(
             @Valid CreateClienteRequest request,
             @Context UriInfo uriInfo
@@ -64,6 +67,7 @@ public class ClienteResource {
     @PUT
     @Path("/{id}")
     @Transactional
+    @RolesAllowed("GERENTE")
     public ClienteResponse ClienteResponse(
         @PathParam("id") Long id,
         @Valid UpdateClienteRequest request

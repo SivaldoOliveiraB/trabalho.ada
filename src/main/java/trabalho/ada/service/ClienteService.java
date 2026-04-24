@@ -44,7 +44,7 @@ public class ClienteService {
         validateUniqueEmail(request.email(), id);
         cliente.setNome(request.nome());
         cliente.setEmail(request.email());
-        cliente.setSenha(request.senha());
+        cliente.setSenha(BCrypt.hashpw(request.senha(), BCrypt.gensalt(10)));
         return cliente;
     }
 
