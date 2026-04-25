@@ -3,7 +3,6 @@ package trabalho.ada.resource.transacao;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import trabalho.ada.enums.TipoTransacao;
 import trabalho.ada.model.Transacao;
-import trabalho.ada.resource.transacao.ContaResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

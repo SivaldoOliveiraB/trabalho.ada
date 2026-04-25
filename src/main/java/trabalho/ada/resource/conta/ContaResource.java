@@ -1,5 +1,6 @@
 package trabalho.ada.resource.conta;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ public class ContaResource {
 
     @POST
     @Transactional
+    @RolesAllowed({"GERENTE"})
     public Response create(
             @Valid CreateContaRequest request,
             @Context UriInfo uriInfo
@@ -33,9 +35,22 @@ public class ContaResource {
         return Response.created(location).entity(toResponse(conta)).build();
     }
 
+    @GET
+    @Path("/{id}")
+    @RolesAllowed({"GERENTE", "CLIENTE"})
+    public Response getContas(
+            @PathParam("id") Long contaId,
+            @Context UriInfo uriInfo
+    ){
+        Conta conta = contaService.getConta(contaId);
+        URI location = uriInfo.getAbsolutePathBuilder().path(conta.getId().toString()).build();
+        return Response.created(location).entity(toResponse(conta)).build();
+    }
+
     @POST
     @Path("/{id}/deposito")
     @Transactional
+    @RolesAllowed({"GERENTE", "CLIENTE"})
     public Response deposita(
             @Valid ValorTransacaoRequest request,
             @PathParam("id") Long contaId,
@@ -49,6 +64,7 @@ public class ContaResource {
     @POST
     @Path("/{id}/saque")
     @Transactional
+    @RolesAllowed({"GERENTE", "CLIENTE"})
     public Response saca(
             @Valid ValorTransacaoRequest request,
             @PathParam("id") Long contaId,
@@ -62,6 +78,7 @@ public class ContaResource {
     @POST
     @Path("/{id}/transferencia")
     @Transactional
+    @RolesAllowed({"GERENTE", "CLIENTE"})
     public Response transfere(
             @Valid TransferenciaResquest resquest,
             @PathParam("id") Long contaOrigemId,

@@ -1,6 +1,7 @@
 package trabalho.ada.resource.transacao;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
@@ -20,6 +21,7 @@ public class TransacaoResourse {
 
     @GET
     @Path("/{id}")
+    @RolesAllowed({"GERENTE", "CLIENTE"})
     public TransacaoResponse findById(
             @PathParam("id") Long id
     ){
@@ -27,6 +29,7 @@ public class TransacaoResourse {
     }
 
     @GET
+    @RolesAllowed({"GERENTE", "CLIENTE"})
     public List<TransacaoResponse> findByContaId(
             @QueryParam("contaId") Long contaId
     ) {

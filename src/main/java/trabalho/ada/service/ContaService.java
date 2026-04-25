@@ -3,8 +3,10 @@ package trabalho.ada.service;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import trabalho.ada.enums.TipoConta;
 import trabalho.ada.enums.TipoTransacao;
+import trabalho.ada.exception.BusinessException;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
@@ -25,6 +27,9 @@ public class ContaService {
     @Inject
     TransacaoService transacaoService;
 
+    @Inject
+    JsonWebToken jwt;
+
     public Conta create(CreateContaRequest request){
         Cliente cliente = clienteService.getRequiredCliente(request.cliente().id());
 
@@ -32,10 +37,22 @@ public class ContaService {
         String numeroConta = gerarNumeroConta(seq);
 
         Conta conta = new Conta();
-        conta.setTipo(TipoConta.valueOf(request.tipo()));
+        conta.setTipo(TipoConta.valueOf(request.tipo().toString()));
         conta.setNumero(numeroConta);
         conta.setCliente(cliente);
         conta.persist();
+
+        return conta;
+    }
+
+    public Conta getConta(Long id){
+        Conta conta = getRequiredConta(id);
+        Long idClienteToken = Long.valueOf(jwt.getClaim("id").toString());
+        Long idClienteConta = conta.getCliente().getId();
+
+        if( (jwt.getGroups().contains("CLIENTE") ) && !( idClienteToken.equals(idClienteConta)) ){
+            throw new BusinessException("A conta consultada não pertence ao cliente logado.");
+        }
 
         return conta;
     }
