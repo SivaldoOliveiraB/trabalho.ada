@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import trabalho.ada.exception.ErrorResponse;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
 import trabalho.ada.service.ContaService;
@@ -32,7 +33,7 @@ public class ContaResource {
     ){
         Conta conta = contaService.create(request);
         URI location = uriInfo.getAbsolutePathBuilder().path(conta.getId().toString()).build();
-        return Response.created(location).entity(toResponse(conta)).build();
+        return Response.created(location).entity(toResponse(conta, uriInfo)).build();
     }
 
     @GET
@@ -43,8 +44,8 @@ public class ContaResource {
             @Context UriInfo uriInfo
     ){
         Conta conta = contaService.getConta(contaId);
-        URI location = uriInfo.getAbsolutePathBuilder().path(conta.getId().toString()).build();
-        return Response.created(location).entity(toResponse(conta)).build();
+
+        return Response.ok(toResponse(conta, uriInfo)).build();
     }
 
     @POST
@@ -56,6 +57,11 @@ public class ContaResource {
             @PathParam("id") Long contaId,
             @Context UriInfo uriInfo
     ){
+        if (request == null || request.valor() == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new ErrorResponse("Campo 'valor' é obrigatório"))
+                    .build();
+        }
         Transacao transacao = contaService.deposito(request.valor(), contaId);
         URI location = uriInfo.getAbsolutePathBuilder().path(transacao.getId().toString()).build();
         return Response.created(location).entity(toResponseContaTransacao(transacao)).build();
@@ -90,7 +96,7 @@ public class ContaResource {
         return Response.created(location).entity(toResponseTransferencia(transacao)).build();
     }
 
-    private ContaResponse toResponse(Conta conta) { return new ContaResponse(conta); }
+    private ContaResponse toResponse(Conta conta, UriInfo uriInfo) { return new ContaResponse(conta, uriInfo); }
 
     private TransacaoResponse toResponseContaTransacao(Transacao transacao) { return  new TransacaoResponse(transacao); }
 

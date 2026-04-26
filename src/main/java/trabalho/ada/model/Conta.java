@@ -6,7 +6,7 @@ import org.hibernate.annotations.Formula;
 import trabalho.ada.enums.TipoConta;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -31,11 +31,8 @@ public class Conta extends PanacheEntityBase {
     @Formula("(SELECT s.saldo FROM view_saldo s WHERE s.numero = numero)")
     private BigDecimal saldo;
 
-    //@OneToMany(mappedBy = "contaOrigem")
-    //private List<Transacao> saques = new ArrayList<>();
-
-    //@OneToMany(mappedBy = "contaDestino")
-    //private List<Transacao> depositos = new ArrayList<>();
+    @Transient
+    private List<Transacao> trasacoes;
 
     public Long getId() {
         return id;
@@ -73,14 +70,24 @@ public class Conta extends PanacheEntityBase {
         this.saldo = saldo;
     }
 
-    /*
-    public Transacao getDeposito() {
-        return this.depositos.get(0);
+    public List<Transacao> getTrasacoes() {
+        return trasacoes;
     }
 
-    public void setDeposito(Transacao deposito) {
-        this.depositos.add(deposito);
+    public void setTrasacoes(List<Transacao> trasacoes) {
+        this.trasacoes = trasacoes;
     }
 
-     */
+    public List<Transacao> getTransacoesHoje() {
+        if (trasacoes == null || trasacoes.isEmpty()) {
+            return List.of();
+        }
+
+        LocalDate hoje = LocalDate.now();
+
+        return trasacoes.stream()
+                .filter(t -> t.getDataHora().toLocalDate().equals(hoje))
+                .toList();
+    }
+
 }

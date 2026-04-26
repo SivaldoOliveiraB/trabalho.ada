@@ -54,6 +54,8 @@ public class ContaService {
             throw new BusinessException("A conta consultada não pertence ao cliente logado.");
         }
 
+        conta.setTrasacoes(Transacao.findByContaId(id));
+
         return conta;
     }
 
