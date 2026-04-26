@@ -3,9 +3,7 @@ package trabalho.ada.service;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
 
-import trabalho.ada.enums.TipoConta;
 import trabalho.ada.enums.TipoTransacao;
-import trabalho.ada.exception.BusinessException;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
 
@@ -13,50 +11,11 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @ApplicationScoped
-public class TransacaoService {
+public class TransacaoService extends Service{
 
     public Transacao crate(TipoTransacao tipo, BigDecimal valor, Conta contaOrigem, Conta contaDestino){
 
         Transacao transacao = new Transacao(tipo, valor);
-
-        // se for depósito a conta eum que vai entrar o dinheiro é a conta destino
-        if(tipo.equals(TipoTransacao.DEPOSITO)){
-
-            // conforme regra de negócio, não é permitido depósito em conta ELETRONICA
-            if(contaDestino.getTipo().equals(TipoConta.ELETRONICA)){ // se a conta de destino for ele ELETRONICA
-                throw new BusinessException("Conta do tipo ELETRONICA não permite depósitos.");
-            }
-
-            contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
-        }
-
-
-        if(tipo.equals(TipoTransacao.SAQUE)){
-
-            // conforme regra de negócio, não é permitido saque em conta ELETRONICA
-            if(contaOrigem.getTipo().equals(TipoConta.ELETRONICA)){ // se a conta de destino for ele ELETRONICA
-                throw new BusinessException("Conta do tipo ELETRONICA não permite saques.");
-            }
-
-            //verifica se a conta tem saldo
-            if(valor.compareTo(contaOrigem.getSaldo()) > 0){
-                throw new BusinessException("Saldo insuficiente para realizar o saque.");
-            }
-
-            contaOrigem.setSaldo(contaOrigem.getSaldo().add(valor));
-        }
-
-        if(tipo.equals(TipoTransacao.TRANSFERENCIA)){
-
-            //verifica se a conta tem saldo
-            if(valor.compareTo(contaOrigem.getSaldo()) > 0){
-                throw new BusinessException("Saldo insuficiente para realizar a transferência.");
-            }
-
-            BigDecimal valorSaldoOrigem = valor.abs().negate(); // transforma o valor em negativo para debitar do saldo
-            contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
-            contaOrigem.setSaldo(contaOrigem.getSaldo().add(valorSaldoOrigem));
-        }
 
         transacao.setContaOrigem(contaOrigem);
         transacao.setContaDestino(contaDestino);
@@ -76,6 +35,10 @@ public class TransacaoService {
     }
 
     public List<Transacao> getByContaId(Long contaId) {
+        Conta conta = Conta.findById(contaId);
+
+        this.verificaDonoDaConta(conta);
+
         return Transacao.findByContaId(contaId);
     }
 }

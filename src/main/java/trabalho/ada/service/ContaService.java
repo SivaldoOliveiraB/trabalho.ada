@@ -16,7 +16,7 @@ import trabalho.ada.resource.conta.CreateContaRequest;
 import java.math.BigDecimal;
 
 @ApplicationScoped
-public class ContaService {
+public class ContaService extends Service{
 
     @Inject
     ClienteService clienteService;
@@ -26,9 +26,6 @@ public class ContaService {
 
     @Inject
     TransacaoService transacaoService;
-
-    @Inject
-    JsonWebToken jwt;
 
     public Conta create(CreateContaRequest request){
         Cliente cliente = clienteService.getRequiredCliente(request.cliente().id());
@@ -47,12 +44,8 @@ public class ContaService {
 
     public Conta getConta(Long id){
         Conta conta = getRequiredConta(id);
-        Long idClienteToken = Long.valueOf(jwt.getClaim("id").toString());
-        Long idClienteConta = conta.getCliente().getId();
 
-        if( (jwt.getGroups().contains("CLIENTE") ) && !( idClienteToken.equals(idClienteConta)) ){
-            throw new BusinessException("A conta consultada não pertence ao cliente logado.");
-        }
+        verificaDonoDaConta(conta);
 
         conta.setTrasacoes(Transacao.findByContaId(id));
 
@@ -71,6 +64,14 @@ public class ContaService {
         Conta contaDestino = getRequiredConta(contaId);
         Conta contaOrigem = null;
 
+        if(contaDestino.getTipo().equals(TipoConta.ELETRONICA)){
+            throw new BusinessException("Conta do tipo ELETRONICA não permite depósitos.");
+        }
+
+        verificaDonoDaConta(contaDestino);
+
+        contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
+
         return transacaoService.crate(TipoTransacao.DEPOSITO, valor, contaOrigem, contaDestino);
     }
 
@@ -78,14 +79,43 @@ public class ContaService {
         Conta contaDestino = null;
         Conta contaOrigem = getRequiredConta(contaId);
 
+        if(contaOrigem.getTipo().equals(TipoConta.ELETRONICA)){
+            throw new BusinessException("Conta do tipo ELETRONICA não permite saques.");
+        }
+
+        verificaDonoDaConta(contaOrigem);
+
+        verificaSaldo(contaOrigem, valor);
+
         BigDecimal valorNegativo = valor.abs().negate();
 
+        contaOrigem.setSaldo(contaOrigem.getSaldo().add(valor));
+
         return transacaoService.crate(TipoTransacao.SAQUE, valorNegativo, contaOrigem, contaDestino);
+    }
+
+    private void verificaSaldo(Conta conta, BigDecimal valor){
+        if(valor.compareTo(conta.getSaldo()) > 0){
+            String tipoTransacao;
+            if(conta.getTipo().equals(TipoConta.ELETRONICA)){
+                tipoTransacao = "a trasferência.";
+            }else {
+                tipoTransacao = "o saque.";
+            }
+
+            throw new BusinessException("Saldo insuficiente para realizar " + tipoTransacao);
+        }
     }
 
     public Transacao transferencia(BigDecimal valor, Long contaOrigemId, Long contaDestinoId){
         Conta contaOrigem = getRequiredConta(contaOrigemId);
         Conta contaDestino = getRequiredConta(contaDestinoId);
+
+        verificaDonoDaConta(contaOrigem);
+
+        verificaSaldo(contaOrigem, valor);
+
+        contaOrigem.setSaldo(contaOrigem.getSaldo().add(valor));
 
         return transacaoService.crate(TipoTransacao.TRANSFERENCIA, valor, contaOrigem, contaDestino);
     }
