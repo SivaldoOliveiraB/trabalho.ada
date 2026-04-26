@@ -3,7 +3,6 @@ package trabalho.ada.service;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotFoundException;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import trabalho.ada.enums.TipoConta;
 import trabalho.ada.enums.TipoTransacao;
 import trabalho.ada.exception.BusinessException;
