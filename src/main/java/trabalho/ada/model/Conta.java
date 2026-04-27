@@ -7,6 +7,7 @@ import trabalho.ada.enums.TipoConta;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -71,7 +72,7 @@ public class Conta extends PanacheEntityBase {
     }
 
     public List<Transacao> getTrasacoes() {
-        return trasacoes;
+        return this.trasacoes != null ? trasacoes : Collections.emptyList();
     }
 
     public void setTrasacoes(List<Transacao> trasacoes) {

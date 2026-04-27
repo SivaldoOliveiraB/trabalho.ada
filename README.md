@@ -1,5 +1,6 @@
 Para começar a executar o programa, depois de fazer as inserções no banco de dados,
-conforme descrito nas intrunções, será necessário executar o seguinte comando no banco de dados:
+conforme descrito nas intrunções do arquivo bancada.sql, no projeto meeting-room, 
+será necessário executar o seguinte comando no banco de dados:
 
 CREATE SEQUENCE conta_seq START 9;
 

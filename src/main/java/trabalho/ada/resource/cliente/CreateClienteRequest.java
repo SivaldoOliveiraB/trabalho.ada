@@ -1,6 +1,7 @@
 package trabalho.ada.resource.cliente;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
 
 public record CreateClienteRequest(
 
@@ -11,6 +12,7 @@ public record CreateClienteRequest(
         String cpf,
 
         @NotNull(message = "e-mail obrigatório.")
+        @Email(message = "e-mail inválido.")
         String email,
 
         @NotNull(message = "senha obrigatória")

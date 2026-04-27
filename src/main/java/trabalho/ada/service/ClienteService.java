@@ -1,11 +1,14 @@
 package trabalho.ada.service;
 
+import jakarta.inject.Inject;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.mindrot.jbcrypt.BCrypt;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
+import trabalho.ada.exception.BusinessException;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.model.PageResult;
 import trabalho.ada.resource.cliente.CreateClienteRequest;
@@ -13,6 +16,9 @@ import trabalho.ada.resource.cliente.UpdateClienteRequest;
 
 @ApplicationScoped
 public class ClienteService {
+
+    @Inject
+    JsonWebToken jwt;
 
     public PageResult<Cliente> list(int page, int size){
         var query = Cliente.findAll(Sort.by("nome"));
@@ -31,6 +37,11 @@ public class ClienteService {
     }
 
     public Cliente create (CreateClienteRequest request){
+
+        if ( !(jwt.getGroups().contains("GERENTE") ) ){
+            throw new BusinessException("O perfil " + jwt.getGroups().toString() + " não tem permissão para abrir conta");
+        }
+
         validateUniqueCPf(request.cpf(), null);
         validateUniqueEmail(request.email(), null);
         Cliente cliente = new Cliente(request.nome().trim(), request.cpf().trim(), request.email().trim(), request.senha().trim());
@@ -40,6 +51,11 @@ public class ClienteService {
     }
 
     public Cliente update(Long id, UpdateClienteRequest request){
+
+        if ( !(jwt.getGroups().contains("GERENTE") ) ){
+            throw new BusinessException("O perfil " + jwt.getGroups().toString() + " não tem permissão para alterar dados de uma conta");
+        }
+
         Cliente cliente = getRequiredCliente(id);
         validateUniqueEmail(request.email(), id);
         cliente.setNome(request.nome());

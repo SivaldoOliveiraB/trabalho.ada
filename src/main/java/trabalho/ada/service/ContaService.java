@@ -60,6 +60,11 @@ public class ContaService extends Service{
     }
 
     public Transacao deposito(BigDecimal valor, Long contaId){
+
+        if (valor.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("O valor do depósito deve ser maior que zero.");
+        }
+
         Conta contaDestino = getRequiredConta(contaId);
         Conta contaOrigem = null;
 
@@ -75,6 +80,11 @@ public class ContaService extends Service{
     }
 
     public Transacao saque(BigDecimal valor, Long contaId){
+
+        if (valor.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("O valor do saque deve ser maior que zero.");
+        }
+
         Conta contaDestino = null;
         Conta contaOrigem = getRequiredConta(contaId);
 
@@ -88,7 +98,7 @@ public class ContaService extends Service{
 
         BigDecimal valorNegativo = valor.abs().negate();
 
-        contaOrigem.setSaldo(contaOrigem.getSaldo().add(valor));
+        contaOrigem.setSaldo(contaOrigem.getSaldo().add(valorNegativo));
 
         return transacaoService.crate(TipoTransacao.SAQUE, valorNegativo, contaOrigem, contaDestino);
     }
@@ -107,6 +117,15 @@ public class ContaService extends Service{
     }
 
     public Transacao transferencia(BigDecimal valor, Long contaOrigemId, Long contaDestinoId){
+
+        if (valor.compareTo(BigDecimal.ZERO) < 0) {
+            throw new BusinessException("O valor da transferência deve ser maior que zero.");
+        }
+
+        if(contaDestinoId.equals(contaOrigemId)){
+            throw new BusinessException("A conta de origem é igual a conta de destino.");
+        }
+
         Conta contaOrigem = getRequiredConta(contaOrigemId);
         Conta contaDestino = getRequiredConta(contaDestinoId);
 
@@ -114,7 +133,7 @@ public class ContaService extends Service{
 
         verificaSaldo(contaOrigem, valor);
 
-        contaOrigem.setSaldo(contaOrigem.getSaldo().add(valor));
+        contaOrigem.setSaldo(contaOrigem.getSaldo().add(valor.negate()));
 
         return transacaoService.crate(TipoTransacao.TRANSFERENCIA, valor, contaOrigem, contaDestino);
     }
