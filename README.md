@@ -5,4 +5,5 @@ será necessário executar o seguinte comando no banco de dados:
 CREATE SEQUENCE conta_seq START 9;
 
 Isso irá criar no banco de dados uma sequência chamada conta_seq, 
-definindo o primeiro valor gerado será 9 (pois já existem oito contas cadastradas no bando de dados)
+definindo o primeiro valor gerado será 9 (pois já existem oito contas cadastradas no bando de dados).
+Esse SEQUECE conta_seq será usado para pegar o próximo número da conta a ser criado
