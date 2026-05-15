@@ -13,10 +13,7 @@ import trabalho.ada.exception.AuthenticationException;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.resource.auth.TokenResponse;
 import trabalho.ada.service.AuthService;
-
 import static org.junit.jupiter.api.Assertions.*;
-
-
 
 @QuarkusTest
 class AuthServiceTest {

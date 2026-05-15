@@ -4,7 +4,6 @@ import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import trabalho.ada.enums.TipoTransacao;
 import trabalho.ada.model.Conta;
@@ -18,9 +17,6 @@ class TransacaoServiceTest {
 
     @Inject
     TransacaoService transacaoService;
-
-    private Transacao transacao;
-
 
     @Test
     @TestTransaction
