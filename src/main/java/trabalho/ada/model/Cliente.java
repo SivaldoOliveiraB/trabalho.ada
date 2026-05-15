@@ -42,6 +42,14 @@ public class Cliente extends PanacheEntityBase {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public String getNome() {
         return nome;
     }
