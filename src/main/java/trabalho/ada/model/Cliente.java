@@ -77,4 +77,8 @@ public class Cliente extends PanacheEntityBase {
     public Role getRole() {
         return role;
     }
+
+    public String getCpf() {
+        return cpf;
+    }
 }
