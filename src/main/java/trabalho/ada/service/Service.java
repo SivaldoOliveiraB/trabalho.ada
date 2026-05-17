@@ -10,6 +10,9 @@ public class Service {
     @Inject
     JsonWebToken jwt;
 
+    final String CONTA_NAO_PERTENCE_AO_CLIENTE = "Essa conta não pertence ao cliente logado.";
+
+/*
     protected void verificaDonoDaConta(Conta conta){
         Long idClienteToken = Long.valueOf(jwt.getClaim("id").toString());
         Long idClienteConta = conta.getCliente().getId();
@@ -17,5 +20,13 @@ public class Service {
         if( (jwt.getGroups().contains("CLIENTE") ) && !( idClienteToken.equals(idClienteConta)) ){
             throw new BusinessException("Essa conta não pertence ao cliente logado.");
         }
+    }
+*/
+
+    public boolean contaPertenceAoCliente(Conta conta){
+        Long idClienteToken = Long.valueOf(jwt.getClaim("id").toString());
+        Long idClienteConta = conta.getCliente().getId();
+
+        return (!jwt.getGroups().contains("CLIENTE")) || idClienteToken.equals(idClienteConta);
     }
 }

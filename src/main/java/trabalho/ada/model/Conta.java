@@ -91,4 +91,7 @@ public class Conta extends PanacheEntityBase {
                 .toList();
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

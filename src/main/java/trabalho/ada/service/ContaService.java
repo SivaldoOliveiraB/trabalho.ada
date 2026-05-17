@@ -2,6 +2,7 @@ package trabalho.ada.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
 import jakarta.ws.rs.NotFoundException;
 import trabalho.ada.enums.TipoConta;
 import trabalho.ada.enums.TipoTransacao;
@@ -44,7 +45,9 @@ public class ContaService extends Service{
     public Conta getConta(Long id){
         Conta conta = getRequiredConta(id);
 
-        verificaDonoDaConta(conta);
+        if(!contaPertenceAoCliente(conta)){
+            throw new BusinessException(this.CONTA_NAO_PERTENCE_AO_CLIENTE);
+        }
 
         conta.setTrasacoes(Transacao.findByContaId(id));
 
@@ -52,7 +55,9 @@ public class ContaService extends Service{
     }
 
     public Conta getRequiredConta(Long id) {
+
         Conta conta = Conta.findById(id);
+
         if (conta == null) {
             throw new NotFoundException("Conta com o id " + id + " não encontrada");
         }
@@ -66,17 +71,18 @@ public class ContaService extends Service{
         }
 
         Conta contaDestino = getRequiredConta(contaId);
-        Conta contaOrigem = null;
 
         if(contaDestino.getTipo().equals(TipoConta.ELETRONICA)){
             throw new BusinessException("Conta do tipo ELETRONICA não permite depósitos.");
         }
 
-        verificaDonoDaConta(contaDestino);
+        if(!contaPertenceAoCliente(contaDestino)){
+            throw new BusinessException(this.CONTA_NAO_PERTENCE_AO_CLIENTE);
+        }
 
         contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
 
-        return transacaoService.crate(TipoTransacao.DEPOSITO, valor, contaOrigem, contaDestino);
+        return transacaoService.crate(TipoTransacao.DEPOSITO, valor, null, contaDestino);
     }
 
     public Transacao saque(BigDecimal valor, Long contaId){
@@ -85,14 +91,15 @@ public class ContaService extends Service{
             throw new BusinessException("O valor do saque deve ser maior que zero.");
         }
 
-        Conta contaDestino = null;
         Conta contaOrigem = getRequiredConta(contaId);
 
         if(contaOrigem.getTipo().equals(TipoConta.ELETRONICA)){
             throw new BusinessException("Conta do tipo ELETRONICA não permite saques.");
         }
 
-        verificaDonoDaConta(contaOrigem);
+        if(!contaPertenceAoCliente(contaOrigem)){
+            throw new BusinessException(this.CONTA_NAO_PERTENCE_AO_CLIENTE);
+        }
 
         verificaSaldo(contaOrigem, valor);
 
@@ -100,7 +107,7 @@ public class ContaService extends Service{
 
         contaOrigem.setSaldo(contaOrigem.getSaldo().add(valorNegativo));
 
-        return transacaoService.crate(TipoTransacao.SAQUE, valorNegativo, contaOrigem, contaDestino);
+        return transacaoService.crate(TipoTransacao.SAQUE, valorNegativo, contaOrigem, null);
     }
 
     private void verificaSaldo(Conta conta, BigDecimal valor){
@@ -129,11 +136,14 @@ public class ContaService extends Service{
         Conta contaOrigem = getRequiredConta(contaOrigemId);
         Conta contaDestino = getRequiredConta(contaDestinoId);
 
-        verificaDonoDaConta(contaOrigem);
+        if(!contaPertenceAoCliente(contaOrigem)){
+            throw new BusinessException(this.CONTA_NAO_PERTENCE_AO_CLIENTE);
+        }
 
         verificaSaldo(contaOrigem, valor);
 
         contaOrigem.setSaldo(contaOrigem.getSaldo().add(valor.negate()));
+        contaDestino.setSaldo(contaDestino.getSaldo().add(valor));
 
         return transacaoService.crate(TipoTransacao.TRANSFERENCIA, valor, contaOrigem, contaDestino);
     }

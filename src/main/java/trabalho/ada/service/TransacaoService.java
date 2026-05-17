@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.NotFoundException;
 
 import trabalho.ada.enums.TipoTransacao;
+import trabalho.ada.exception.BusinessException;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
 
@@ -37,7 +38,9 @@ public class TransacaoService extends Service{
     public List<Transacao> getByContaId(Long contaId) {
         Conta conta = Conta.findById(contaId);
 
-        this.verificaDonoDaConta(conta);
+        if(!contaPertenceAoCliente(conta)){
+            throw new BusinessException(this.CONTA_NAO_PERTENCE_AO_CLIENTE);
+        }
 
         return Transacao.findByContaId(contaId);
     }
