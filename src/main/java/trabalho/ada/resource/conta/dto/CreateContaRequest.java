@@ -1,4 +1,4 @@
-package trabalho.ada.resource.conta;
+package trabalho.ada.resource.conta.dto;
 
 import jakarta.validation.constraints.NotNull;
 import trabalho.ada.enums.TipoConta;

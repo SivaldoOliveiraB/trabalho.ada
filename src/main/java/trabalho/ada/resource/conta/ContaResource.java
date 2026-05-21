@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.UriInfo;
 import trabalho.ada.exception.ErrorResponse;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
+import trabalho.ada.resource.conta.dto.*;
 import trabalho.ada.service.ContaService;
 
 import java.net.URI;

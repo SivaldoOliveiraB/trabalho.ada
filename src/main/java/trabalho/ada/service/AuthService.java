@@ -7,14 +7,13 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import javax.sql.DataSource;
 
 import org.mindrot.jbcrypt.BCrypt;
 import trabalho.ada.enums.Role;
 import trabalho.ada.exception.AuthenticationException;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.model.LoggedUser;
-import trabalho.ada.resource.auth.TokenResponse;
+import trabalho.ada.resource.auth.dto.TokenResponse;
 
 import java.time.Duration;
 

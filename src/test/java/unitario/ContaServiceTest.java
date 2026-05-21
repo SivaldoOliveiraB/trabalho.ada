@@ -1,11 +1,10 @@
 package unitario;
 
-import io.quarkus.hibernate.orm.panache.Panache;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.mock.PanacheMock;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.security.TestSecurity;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import org.eclipse.microprofile.jwt.JsonWebToken;
@@ -13,8 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import org.mockito.Mockito;
-
-import trabalho.ada.enums.Role;
 import trabalho.ada.enums.TipoConta;
 import trabalho.ada.enums.TipoTransacao;
 import trabalho.ada.exception.BusinessException;
@@ -22,13 +19,14 @@ import trabalho.ada.model.Cliente;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
 import trabalho.ada.repository.ContaRepository;
-import trabalho.ada.resource.conta.ClienteRequest;
-import trabalho.ada.resource.conta.CreateContaRequest;
+import trabalho.ada.resource.conta.dto.ClienteRequest;
+import trabalho.ada.resource.conta.dto.CreateContaRequest;
 import trabalho.ada.service.ClienteService;
 import trabalho.ada.service.ContaService;
 import trabalho.ada.service.TransacaoService;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,24 +84,6 @@ class ContaServiceTest {
     }
 
     @Test
-    void deveRetornarUmaConta(){
-
-        // Arrange
-        Conta conta = new Conta();
-        conta.setId(1L);
-
-        when(Conta.findById(1L)).thenReturn(conta);
-
-        // Act
-        Conta result = contaService.getRequiredConta(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(conta.getId(), result.getId());
-
-    }
-
-    @Test
     @TestTransaction
     void deveFazerDepositoComSucesso(){
 
@@ -140,7 +120,38 @@ class ContaServiceTest {
         assertEquals(BigDecimal.valueOf(50), transacao.getValor());
 
     }
+/*
+    @Test
+    void deveLancarExcptionQuandoValorForZero(){
+        //Arrange
+        when(jwt.getClaim("id")).thenReturn("1");
+        when(jwt.getGroups()).thenReturn(Set.of("CLIENTE"));
 
+        Cliente cliente = new Cliente("Sivaldo", "12345678900", "sivaldo@ada.com", "123456");
+        cliente.setId(1L);
+
+        Conta contaDestino = new Conta();
+        contaDestino.setTipo(TipoConta.CORRENTE);
+        contaDestino.setCliente(cliente);
+        contaDestino.setNumero("0001-1");
+        contaDestino.setId(1L);
+        contaDestino.setSaldo(BigDecimal.ZERO);
+
+        PanacheMock.doReturn(contaDestino).when(Conta.class).findById(1L);
+
+        Transacao transacaoMock = new Transacao(TipoTransacao.DEPOSITO, BigDecimal.valueOf(50));
+
+        when(transacaoService.crate(
+                eq(TipoTransacao.DEPOSITO),
+                eq(BigDecimal.valueOf(0)),
+                isNull(),
+                eq(contaDestino)
+        )).thenReturn(transacaoMock);
+
+        //Act + Assent
+        assertThrows(BusinessException.class, () -> contaService.saque(BigDecimal.valueOf(50), contaDestino.getId()));
+    }
+*/
     @Test
     void deveGerarNumeroConta() {
 
@@ -368,6 +379,78 @@ class ContaServiceTest {
 
         // Act + Assert
         assertThrows(BusinessException.class, () -> contaService.transferencia(BigDecimal.valueOf(50), contaOrigem.getId(), contaOrigem.getId()));
+    }
+
+    @Test
+    void deveRetornarUmaConta(){
+        //Arrange
+        PanacheMock.mock(Transacao.class);
+        when(jwt.getClaim("id")).thenReturn("1");
+        when(jwt.getGroups()).thenReturn(Set.of("CLIENTE"));
+
+        Cliente cliente = new Cliente("Sivaldo", "12345678900", "sivaldo@ada.com", "123456");
+        cliente.setId(1L);
+
+        Conta conta = new Conta();
+        conta.setTipo(TipoConta.CORRENTE);
+        conta.setCliente(cliente);
+        //conta.setNumero("0001-1");
+        conta.setId(1L);
+        //conta.setSaldo(BigDecimal.valueOf(100));
+
+        Transacao transacao1 = new Transacao(TipoTransacao.DEPOSITO, BigDecimal.valueOf(50));
+        Transacao transacao2 = new Transacao(TipoTransacao.DEPOSITO, BigDecimal.valueOf(150));
+        Transacao transacao3 = new Transacao(TipoTransacao.DEPOSITO, BigDecimal.valueOf(250));
+
+        List<Transacao> transacoes = List.of(transacao1, transacao2 , transacao3);
+        conta.setTrasacoes(transacoes);
+
+        PanacheMock.doReturn(conta).when(Conta.class).findById(1L);
+        PanacheQuery<Transacao> query = Mockito.mock(PanacheQuery.class);
+
+        Mockito.when(query.list()).thenReturn(transacoes);
+
+        PanacheMock.doReturn(query)
+                .when(Transacao.class)
+                .find("contaId", 1L);
+
+        //Act
+        Conta contaPesquisada = contaService.getConta(1L);
+
+        //Assert
+        assertNotNull(contaPesquisada);
+        assertEquals(1L, contaPesquisada.getId());
+    }
+
+    @Test
+    void deveLancarUmaExcecaoAoDepositarZeroReais(){
+        //Arrange
+        when(jwt.getClaim("id")).thenReturn("1");
+        when(jwt.getGroups()).thenReturn(Set.of("CLIENTE"));
+
+        Cliente cliente = new Cliente("Sivaldo", "12345678900", "sivaldo@ada.com", "123456");
+        cliente.setId(1L);
+
+        Conta contaDestino = new Conta();
+        contaDestino.setTipo(TipoConta.CORRENTE);
+        contaDestino.setCliente(cliente);
+        contaDestino.setNumero("0001-1");
+        contaDestino.setId(1L);
+        //contaDestino.setSaldo(BigDecimal.ZERO);
+
+        PanacheMock.doReturn(contaDestino).when(Conta.class).findById(1L);
+
+        Transacao transacaoMock = new Transacao(TipoTransacao.DEPOSITO, BigDecimal.valueOf(50));
+
+        when(transacaoService.crate(
+                eq(TipoTransacao.DEPOSITO),
+                eq(BigDecimal.ZERO),
+                isNull(),
+                eq(contaDestino)
+        )).thenReturn(transacaoMock);
+
+        //Act + Assert
+        assertThrows(BusinessException.class, () -> contaService.deposito(BigDecimal.ZERO, 1L));
     }
 
 }

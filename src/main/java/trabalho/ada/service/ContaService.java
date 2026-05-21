@@ -2,7 +2,6 @@ package trabalho.ada.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
 import jakarta.ws.rs.NotFoundException;
 import trabalho.ada.enums.TipoConta;
 import trabalho.ada.enums.TipoTransacao;
@@ -11,7 +10,7 @@ import trabalho.ada.model.Cliente;
 import trabalho.ada.model.Conta;
 import trabalho.ada.model.Transacao;
 import trabalho.ada.repository.ContaRepository;
-import trabalho.ada.resource.conta.CreateContaRequest;
+import trabalho.ada.resource.conta.dto.CreateContaRequest;
 
 import java.math.BigDecimal;
 
@@ -66,7 +65,7 @@ public class ContaService extends Service{
 
     public Transacao deposito(BigDecimal valor, Long contaId){
 
-        if (valor.compareTo(BigDecimal.ZERO) < 0) {
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException("O valor do depósito deve ser maior que zero.");
         }
 

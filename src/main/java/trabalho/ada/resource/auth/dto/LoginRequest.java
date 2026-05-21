@@ -1,4 +1,4 @@
-package trabalho.ada.resource.auth;
+package trabalho.ada.resource.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

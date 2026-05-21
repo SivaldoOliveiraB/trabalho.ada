@@ -1,8 +1,8 @@
-package trabalho.ada.resource.cliente;
+package trabalho.ada.resource.cliente.dto;
 
 import jakarta.validation.constraints.NotNull;
 
-public record UpdateClienteRequest(
+public record UpdateClienteRequestDTO(
 
         @NotNull(message = "Nome obrigatório.")
         String nome,

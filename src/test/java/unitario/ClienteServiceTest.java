@@ -8,13 +8,14 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import trabalho.ada.exception.BusinessException;
 import trabalho.ada.model.Cliente;
-import trabalho.ada.resource.cliente.CreateClienteRequest;
-import trabalho.ada.resource.cliente.UpdateClienteRequest;
+import trabalho.ada.resource.cliente.dto.CreateClienteRequestDTO;
+import trabalho.ada.resource.cliente.dto.UpdateClienteRequestDTO;
 import trabalho.ada.service.ClienteService;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +36,25 @@ class ClienteServiceTest {
     }
 
     @Test
+    void deveRetornarUmCliente(){
+
+        //Arrange
+        Cliente cliente = new Cliente();
+        cliente.setId(1L);
+        cliente.setNome("Sivaldo");
+
+        PanacheMock.doReturn(cliente).when(Cliente.class).findById(1L);
+
+        //Act
+        Cliente clientePesquisado = clienteService.getRequiredCliente(1L);
+
+        //Assert
+        Assertions.assertEquals(1L, clientePesquisado.getId());
+        Assertions.assertEquals("Sivaldo", clientePesquisado.getNome());
+    }
+
+
+    @Test
     @TestTransaction
     void deveCriarClienteComSucesso(){
 
@@ -43,18 +63,18 @@ class ClienteServiceTest {
         Mockito.when(Cliente.count("LOWER(cpf) = LOWER(?1)", "12345678900")).thenReturn(0L);
         Mockito.when(Cliente.count("LOWER(email) = LOWER(?1)", "teste@ada.com")).thenReturn(0L);
 
-        CreateClienteRequest request = new CreateClienteRequest( "Sivaldo","12345678900","teste@ada.com","123456");
+        CreateClienteRequestDTO request = new CreateClienteRequestDTO( "Sivaldo","12345678900","teste@ada.com","123456");
 
         // Act
         Cliente cliente = clienteService.create(request);
 
         // Assert
-        assertNotNull(cliente);
-        assertEquals("Sivaldo", cliente.getNome());
-        assertEquals("12345678900", cliente.getCpf());
-        assertEquals("teste@ada.com", cliente.getEmail());
-        assertNotEquals("123456", cliente.getSenha());
-        assertTrue(org.mindrot.jbcrypt.BCrypt.checkpw("123456", cliente.getSenha()));
+        Assertions.assertNotNull(cliente);
+        Assertions.assertEquals("Sivaldo", cliente.getNome());
+        Assertions.assertEquals("12345678900", cliente.getCpf());
+        Assertions.assertEquals("teste@ada.com", cliente.getEmail());
+        Assertions.assertNotEquals("123456", cliente.getSenha());
+        Assertions.assertTrue(org.mindrot.jbcrypt.BCrypt.checkpw("123456", cliente.getSenha()));
 
     }
 
@@ -65,7 +85,7 @@ class ClienteServiceTest {
         // Arrange
         Mockito.when(jwt.getGroups()).thenReturn(Set.of("CLIENTE"));
 
-        CreateClienteRequest request = new CreateClienteRequest("Sivaldo","12345678900","teste@email.com","123456");
+        CreateClienteRequestDTO request = new CreateClienteRequestDTO("Sivaldo","12345678900","teste@email.com","123456");
 
         // Act + Assert
         assertThrows(BusinessException.class, () -> clienteService.create(request));
@@ -78,8 +98,8 @@ class ClienteServiceTest {
         Mockito.when(Cliente.count("LOWER(cpf) = LOWER(?1)", "12345678900")).thenReturn(1L);
         Mockito.when(Cliente.count("LOWER(email) = LOWER(?1)", "teste@ada.com")).thenReturn(1L);
 
-        CreateClienteRequest request =
-                new CreateClienteRequest(
+        CreateClienteRequestDTO request =
+                new CreateClienteRequestDTO(
                         "Sivaldo",
                         "12345678900",
                         "teste@email.com",
@@ -101,11 +121,11 @@ class ClienteServiceTest {
         PanacheMock.doReturn(cliente).when(Cliente.class).findById(1L);
 
         // Act
-        Cliente result = clienteService.findById(1L);
+        Cliente result = clienteService.getRequiredCliente(1L);
 
         // Assert
-        assertNotNull(result);
-        assertEquals("Sivaldo", result.getNome());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals("Sivaldo", result.getNome());
     }
 
     @Test
@@ -114,7 +134,7 @@ class ClienteServiceTest {
         PanacheMock.doReturn(null).when(Cliente.class).findById(99L);
 
         // Act + Assert
-        assertThrows(NotFoundException.class, () -> clienteService.findById(99L));
+        assertThrows(NotFoundException.class, () -> clienteService.getRequiredCliente(99L));
     }
 
     @Test
@@ -133,15 +153,15 @@ class ClienteServiceTest {
 
         Mockito.when(Cliente.count("LOWER(email) = LOWER(?1) AND id != ?2", "novo@email.com", 1L)).thenReturn(0L);
 
-        UpdateClienteRequest request = new UpdateClienteRequest("Novo Nome","novo@email.com","456789");
+        UpdateClienteRequestDTO request = new UpdateClienteRequestDTO("Novo Nome","novo@email.com","456789");
 
         // Act
         Cliente updated = clienteService.update(1L, request);
 
         // Assert
-        assertEquals("Novo Nome", updated.getNome());
-        assertEquals("novo@email.com", updated.getEmail());
-        assertTrue(org.mindrot.jbcrypt.BCrypt.checkpw("456789", cliente.getSenha()));
+        Assertions.assertEquals("Novo Nome", updated.getNome());
+        Assertions.assertEquals("novo@email.com", updated.getEmail());
+        Assertions.assertTrue(org.mindrot.jbcrypt.BCrypt.checkpw("456789", cliente.getSenha()));
     }
 
     @Test
@@ -159,10 +179,10 @@ class ClienteServiceTest {
 
         Mockito.when(Cliente.count("LOWER(email) = LOWER(?1) AND id != ?2", "novo@email.com", 1L)).thenReturn(0L);
 
-        UpdateClienteRequest request = new UpdateClienteRequest("Novo Nome","novo@email.com","456789");
+        UpdateClienteRequestDTO request = new UpdateClienteRequestDTO("Novo Nome","novo@email.com","456789");
 
         // Act + Assert
-        assertThrows(BusinessException.class, () -> clienteService.update(1L, request));
+        Assertions.assertThrows(BusinessException.class, () -> clienteService.update(1L, request));
     }
 
     @Test
@@ -181,7 +201,7 @@ class ClienteServiceTest {
 
         Mockito.when(Cliente.count("LOWER(email) = LOWER(?1) AND id != ?2", "novo@email.com", 1L)).thenReturn(1L);
 
-        UpdateClienteRequest request = new UpdateClienteRequest("Novo Nome","novo@email.com","456789");
+        UpdateClienteRequestDTO request = new UpdateClienteRequestDTO("Novo Nome","novo@email.com","456789");
 
         // Act + Assert
         assertThrows(BadRequestException.class, () -> clienteService.update(1L, request));

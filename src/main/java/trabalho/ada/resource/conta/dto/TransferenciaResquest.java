@@ -1,10 +1,14 @@
-package trabalho.ada.resource.conta;
+package trabalho.ada.resource.conta.dto;
 
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-public record ValorTransacaoRequest(
+public record TransferenciaResquest(
+
+        ContaDestinoRequest contaDestino,
+
         @NotNull(message = "O valor da transação é obrigatório")
         BigDecimal valor
-) {}
+) {
+}

@@ -1,13 +1,11 @@
 package trabalho.ada.resource.transacao;
 
-import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.UriInfo;
 import trabalho.ada.model.Transacao;
+import trabalho.ada.resource.transacao.dto.TransacaoResponse;
 import trabalho.ada.service.TransacaoService;
 import java.util.List;
 

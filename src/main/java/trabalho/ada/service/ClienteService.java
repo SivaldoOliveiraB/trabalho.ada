@@ -11,8 +11,8 @@ import jakarta.ws.rs.NotFoundException;
 import trabalho.ada.exception.BusinessException;
 import trabalho.ada.model.Cliente;
 import trabalho.ada.model.PageResult;
-import trabalho.ada.resource.cliente.CreateClienteRequest;
-import trabalho.ada.resource.cliente.UpdateClienteRequest;
+import trabalho.ada.resource.cliente.dto.CreateClienteRequestDTO;
+import trabalho.ada.resource.cliente.dto.UpdateClienteRequestDTO;
 
 @ApplicationScoped
 public class ClienteService {
@@ -26,7 +26,7 @@ public class ClienteService {
         return new PageResult<>(result.list(), page, size, result.count());
     }
 
-    public Cliente findById(Long id){ return getRequiredCliente(id); }
+    //public Cliente findById(Long id){ return getRequiredCliente(id); }
 
     public Cliente getRequiredCliente(Long id) {
         Cliente cliente = Cliente.findById(id);
@@ -36,7 +36,7 @@ public class ClienteService {
         return cliente;
     }
 
-    public Cliente create (CreateClienteRequest request){
+    public Cliente create (CreateClienteRequestDTO request){
 
         if ( !(jwt.getGroups().contains("GERENTE") ) ){
             throw new BusinessException("O perfil " + jwt.getGroups().toString() + " não tem permissão para abrir conta");
@@ -50,7 +50,7 @@ public class ClienteService {
         return cliente;
     }
 
-    public Cliente update(Long id, UpdateClienteRequest request){
+    public Cliente update(Long id, UpdateClienteRequestDTO request){
 
         if ( !(jwt.getGroups().contains("GERENTE") ) ){
             throw new BusinessException("O perfil " + jwt.getGroups().toString() + " não tem permissão para alterar dados de uma conta");

@@ -9,6 +9,8 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import trabalho.ada.resource.auth.dto.LoginRequest;
+import trabalho.ada.resource.auth.dto.TokenResponse;
 import trabalho.ada.service.AuthService;
 
 @Path("/auth")

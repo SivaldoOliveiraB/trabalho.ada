@@ -1,4 +1,4 @@
-package trabalho.ada.resource.conta;
+package trabalho.ada.resource.conta.dto;
 
 import trabalho.ada.enums.TipoTransacao;
 import trabalho.ada.model.Transacao;

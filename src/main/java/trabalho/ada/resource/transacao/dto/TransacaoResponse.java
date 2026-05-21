@@ -1,4 +1,4 @@
-package trabalho.ada.resource.transacao;
+package trabalho.ada.resource.transacao.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import trabalho.ada.enums.TipoTransacao;

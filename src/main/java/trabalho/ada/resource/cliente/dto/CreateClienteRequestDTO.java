@@ -1,9 +1,9 @@
-package trabalho.ada.resource.cliente;
+package trabalho.ada.resource.cliente.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 
-public record CreateClienteRequest(
+public record CreateClienteRequestDTO(
 
         @NotNull(message = "Nome obrigatório.")
         String nome,

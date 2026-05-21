@@ -1,12 +1,12 @@
-package trabalho.ada.resource.conta;
+package trabalho.ada.resource.conta.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.core.UriInfo;
 import trabalho.ada.enums.TipoConta;
 import trabalho.ada.model.Conta;
-import trabalho.ada.resource.Link;
-import trabalho.ada.resource.cliente.ClienteResponse;
+import trabalho.ada.resource.dto.LinkDTO;
+import trabalho.ada.resource.cliente.dto.ClienteResponseDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,9 +17,9 @@ public record ContaResponse(
         String numero,
         TipoConta  tipo,
         BigDecimal saldo,
-        ClienteResponse titular,
+        ClienteResponseDTO titular,
         List <TransacaoResponse> transacoes,
-        Link _links
+        LinkDTO _links
 ) {
     public ContaResponse(@NotNull Conta conta, UriInfo uriInfo){
         this(
@@ -27,7 +27,7 @@ public record ContaResponse(
                 conta.getNumero(),
                 conta.getTipo(),
                 conta.getSaldo(),
-                new ClienteResponse(conta.getCliente().getId(), conta.getCliente().getNome(), conta.getCliente().getEmail()),
+                new ClienteResponseDTO(conta.getCliente().getId(), conta.getCliente().getNome(), conta.getCliente().getEmail()),
 
                 mapTransacoesHoje(conta),
 
@@ -37,8 +37,8 @@ public record ContaResponse(
         );
     }
 
-    public static Link _links(Conta conta, UriInfo uriInfo){
-        return new Link(
+    public static LinkDTO _links(Conta conta, UriInfo uriInfo){
+        return new LinkDTO(
                 uriInfo.getBaseUriBuilder()
                         .path("transacoes")
                         .queryParam("contaId", conta.getId())
