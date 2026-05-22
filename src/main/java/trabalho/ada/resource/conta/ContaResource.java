@@ -58,11 +58,7 @@ public class ContaResource {
             @PathParam("id") Long contaId,
             @Context UriInfo uriInfo
     ){
-        if (request == null || request.valor() == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(new ErrorResponse("Campo 'valor' é obrigatório"))
-                    .build();
-        }
+
         Transacao transacao = contaService.deposito(request.valor(), contaId);
         URI location = uriInfo.getAbsolutePathBuilder().path(transacao.getId().toString()).build();
         return Response.created(location).entity(toResponseContaTransacao(transacao)).build();
